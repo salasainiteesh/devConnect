@@ -7,7 +7,7 @@ const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 const {userAuth} = require("./middlewares/auth");
-const e = require("express");
+
 
 app.use(express.json()); 
 app.use(cookieParser());
