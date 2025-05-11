@@ -16,8 +16,14 @@ authrouter.post("/signup",async(req,res)=>{
             lastName,
             email,
             password:passwordHash});
-       await user.save()
-       res.send("User created successfully");
+       const savedUser=await user.save()
+       const token = await savedUser.getJWT();
+            res.cookie("token",token,{expires:new Date(Date.now()+ 8 * 3600000),});
+           
+       res.json({
+        message:"User created successfully",data:savedUser
+       });
+       
     }catch(err){
         res.status(400).send("ERROR"+err.message);
     } 
@@ -27,19 +33,19 @@ authrouter.post("/login",async(req,res)=>{
     try{
         const {email,password} = req.body;
         if (!email || !password){
-            throw new Error("Email and password are required");
+            throw new Error(" Email and password are required");
         }
         const user =await User.findOne({email:email});
         if(!user){
-            throw new Error("User does not exist");
+            throw new Error(" User does not exist");
         }
         const isPasswordValid = await bcrypt.compare(password,user.password);
         if(isPasswordValid){
             const token = await user.getJWT();
             res.cookie("token",token,{expires:new Date(Date.now()+ 8 * 3600000),});
-            res.send("Login successfully");
+            res.send(user);
         }else{
-            throw new Error("Invalid credentials");
+            throw new Error(" Invalid credentials");
         }
 
     }catch(err){

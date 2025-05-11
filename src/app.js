@@ -7,8 +7,12 @@ const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 const {userAuth} = require("./middlewares/auth");
+const cors = require("cors");
 
-
+app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+}));
 app.use(express.json()); 
 app.use(cookieParser());
 
@@ -21,6 +25,7 @@ app.use("/",authrouter);
 app.use("/",requestRouter);
 app.use("/",profileRouter);
 app.use("/",userRouter);
+
 
 connectDB().then(()=>{
     console.log("Successfully connected to the database");

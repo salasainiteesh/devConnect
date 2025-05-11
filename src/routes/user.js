@@ -2,8 +2,8 @@ const express = require('express');
 const userRouter = express.Router();
 const { userAuth } = require('../middlewares/auth');
 const ConnectionRequest = require('../models/connectionRequest');
-const { populate } = require('../models/user');
-const USER_SAFE_DATA = ["firstName", "lastName", "age","profilePicture", "about" , "skills",   ];
+
+const USER_SAFE_DATA = ["firstName", "lastName", "age","profilePicture", "about" , "skills","photoUrl","gender"   ];
 const User = require('../models/user');
 
 userRouter.get("/user/request/received", userAuth, async(req, res) => {
@@ -19,12 +19,12 @@ userRouter.get("/user/request/received", userAuth, async(req, res) => {
             data: connectionRequests,
         });
     }catch (err) {
-        console.error(error);
+        console.error(err);
         res.status(400).send("ERROR" + err.message);
     }
 });
 
-userRouter.get("/user/request/connections", userAuth, async(req, res) => {
+userRouter.get("/user/connections", userAuth, async(req, res) => {
 
     try {
         const loggedInUser = req.user;
@@ -40,14 +40,14 @@ userRouter.get("/user/request/connections", userAuth, async(req, res) => {
             if(row.fromUserId._id.toString() === loggedInUser._id.toString()){
                     return row.toUserId;
             }
-            row.fromUserId;
+           return row.fromUserId;
         });
         res.status(200).json({
             message: " Connections found successfully",
             data: data,
         });
     }catch (err) {
-        console.error(error);
+        console.error(err);
         res.status(400).send("ERROR" + err.message);
     }
     
@@ -59,6 +59,7 @@ userRouter.get("/feed", userAuth, async(req, res) => {
         let limit = parseInt(req.query.limit) || 10;
         limit = limit > 100 ? 100 : limit;
         const skip = (page - 1) * limit;
+        
         const connectionRequests = await ConnectionRequest.find({
             $or:[
                 {toUserId: loggedInUser._id ,},
@@ -83,6 +84,7 @@ userRouter.get("/feed", userAuth, async(req, res) => {
 
         
     } catch (err) {
+        console.error(err);
         res.status(400).json({message: err.message});
     }
 

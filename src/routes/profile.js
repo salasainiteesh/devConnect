@@ -13,23 +13,25 @@ profileRouter.get("/profile/view", userAuth, async(req,res)=>{
           res.status(401).send("ERROR"+err.message);
       }
   });
-profileRouter.patch("/profile/edit", userAuth, async(req,res)=>{
-    try{
-         if(!validateEditProfileData(req)){
-             throw new Error("Invalid data");
-         }
-         const loggedInuser = req.user;
-         Object.keys(req.body).forEach((key)=>{
-             loggedInuser[key]=req.body[key]});
-         loggedInuser.save();
-            res.json({
-             message:'${loggedInuse.firstName},your Profile is updated successfully',
-             data:loggedInuser,
-         });
-         
-      }catch(err){
-          res.status(401).send("ERROR"+err.message);
+  profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
+    try {
+      if (!validateEditProfileData(req)) {
+        throw new Error("Invalid Edit Request");
       }
+  
+      const loggedInUser = req.user;
+  
+      Object.keys(req.body).forEach((key) => (loggedInUser[key] = req.body[key]));
+  
+      await loggedInUser.save();
+  
+      res.json({
+        message: `${loggedInUser.firstName}, your profile updated successfuly`,
+        data: loggedInUser,
+      });
+    } catch (err) {
+      res.status(400).send("ERROR : " + err.message);
+    }
   });
   profileRouter.patch("/profile/forgotPassword", userAuth, async (req, res) => {
     try {

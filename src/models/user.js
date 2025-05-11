@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
     firstName: {
         type: String,
         required: true,
-        minLegth: 3,
+        minLength: 3,
         maxLength: 50,
         index: true,
 
@@ -45,6 +45,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum:{
             values:["male","female","other"],
+            lowercase: true,
             message: "{VALUE} is not supported"
         }
     },
@@ -60,7 +61,7 @@ const userSchema = new mongoose.Schema({
     },
     about:{
         type: String,
-        default: "default value about the user",
+        default: "default value aboust the user",
         minLegth:10,
         maxLength: 500,
     },
